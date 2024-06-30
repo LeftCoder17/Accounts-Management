@@ -6,10 +6,10 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QCoreApplication>
+#include <QDialog>
 
 
-MainWindow::MainWindow(QWidget *parent) 
-    : QMainWindow(parent), m_openedDatabase("")
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     // Initialize stack widget and main menu.
     resize(800, 600);
@@ -98,45 +98,55 @@ void MainWindow::setupDatabaseMenu()
     // 2.1. Configure the Summary Section (Top Left)
     m_summaryWidget = new QWidget(this);
     m_summaryLayout = new QVBoxLayout(m_summaryWidget);
-    m_databaseNameLabel = new QLabel("Database Name: " + m_nameDatabase, this);
-    m_accountCountLabel = new QLabel("Number of Accounts: ", this); // Assume the count is provided
-    m_accountDetailsLabel = new QLabel("Accounts and Balances:", this); // Assume the details are provided
-    m_showLastMovementsButton = new QPushButton("Show Last Movements", this);
+    m_databaseNameLabel = new QLabel("Nom de la base de dades: " + m_database->get_name(), this);
+    m_accountCountLabel = new QLabel(this);
+    m_accountDetailsLabel = new QLabel(this);
+    update_summary();
+    m_showLastTransactionsButton = new QPushButton("Ultimes transaccions", this);
 
     m_databaseNameLabel->setStyleSheet("font-size: 20px; font-weight: bold; color: #333;");
     m_accountCountLabel->setStyleSheet("font-size: 16px; color: #555;");
     m_accountDetailsLabel->setStyleSheet("font-size: 16px; color: #555;");
-    m_showLastMovementsButton->setStyleSheet("padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;");
+    m_showLastTransactionsButton->setStyleSheet("padding: 10px; background-color: #0A4EAD; color: black; border: none; border-radius: 5px;");
 
-    m_summaryWidget->setStyleSheet("background-color: #e0f7fa; border: 1px solid #a7ffeb; border-radius: 10px; padding: 15px;");
+    m_summaryWidget->setStyleSheet("background-color: #cce3e6; border: 1px solid #a7ffeb; border-radius: 10px; padding: 15px;");
 
     m_summaryLayout->addWidget(m_databaseNameLabel);
     m_summaryLayout->addWidget(m_accountCountLabel);
     m_summaryLayout->addWidget(m_accountDetailsLabel);
-    m_summaryLayout->addWidget(m_showLastMovementsButton);
+    m_summaryLayout->addWidget(m_showLastTransactionsButton);
 
     // 2.2. Configure the Edit Section (Top Right)
     m_editWidget = new QWidget(this);
     m_editLayout = new QVBoxLayout(m_editWidget);
-    m_addAccountButton = new QPushButton("Add Account", this);
-    m_modifyAccountButton = new QPushButton("Modify Account", this);
-    m_addMovementButton = new QPushButton("Add Movement", this);
-    m_modifyMovementButton = new QPushButton("Modify Movement", this);
-    m_addMovementsfromFileButton = new QPushButton("Add Movements from File", this);
+    m_addAccountButton = new QPushButton("Afegeix un compte", this);
+    m_modifyAccountButton = new QPushButton("Modifica un compte", this);
+    m_addTransactionButton = new QPushButton("Afegeix una transaccio", this);
+    m_modifyTransactionButton = new QPushButton("Modifica una transaccio", this);
+    m_addTransactionsfromFileButton = new QPushButton("Afegeix transaccions des d'un fitxer", this);
+
+    m_addAccountButton->setStyleSheet("padding: 10px; background-color: #a52727; color: black; border: none; border-radius: 5px;");
+    m_modifyAccountButton->setStyleSheet("padding: 10px; background-color: #a52727; color: black; border: none; border-radius: 5px;");
+    m_addTransactionButton->setStyleSheet("padding: 10px; background-color: #a52727; color: black; border: none; border-radius: 5px;");
+    m_modifyTransactionButton->setStyleSheet("padding: 10px; background-color: #a52727; color: black; border: none; border-radius: 5px;");
+    m_addTransactionsfromFileButton->setStyleSheet("padding: 10px; background-color: #a52727; color: black; border: none; border-radius: 5px;");
 
     m_editWidget->setStyleSheet("background-color: #ffebee; border: 1px solid #ffcdd2; border-radius: 10px; padding: 15px;");
 
     m_editLayout->addWidget(m_addAccountButton);
     m_editLayout->addWidget(m_modifyAccountButton);
-    m_editLayout->addWidget(m_addMovementButton);
-    m_editLayout->addWidget(m_modifyMovementButton);
-    m_editLayout->addWidget(m_addMovementsfromFileButton);
+    m_editLayout->addWidget(m_addTransactionButton);
+    m_editLayout->addWidget(m_modifyTransactionButton);
+    m_editLayout->addWidget(m_addTransactionsfromFileButton);
 
     // 2.3. Configure the Manage Database Section (Bottom Left)
     m_manageDatabaseWidget = new QWidget(this);
     m_manageDatabaseLayout = new QVBoxLayout(m_manageDatabaseWidget);
-    m_saveDatabaseButton = new QPushButton("Save Database", this);
-    m_closeDatabaseButton = new QPushButton("Close Database", this);
+    m_saveDatabaseButton = new QPushButton("Desa la base de dades", this);
+    m_closeDatabaseButton = new QPushButton("Tanca la base de dades", this);
+
+    m_saveDatabaseButton->setStyleSheet("padding: 10px; background-color: #d9a73e; color: black; border: none; border-radius: 5px;");
+    m_closeDatabaseButton->setStyleSheet("padding: 10px; background-color: #d9a73e; color: black; border: none; border-radius: 5px;");
 
     m_manageDatabaseWidget->setStyleSheet("background-color: #fff8e1; border: 1px solid #ffecb3; border-radius: 10px; padding: 15px;");
 
@@ -146,7 +156,9 @@ void MainWindow::setupDatabaseMenu()
     // 2.4. Configure the Analyze Section (Bottom Right)
     m_analyseDatabaseWidget = new QWidget(this);
     m_analyseDatabaseLayout = new QVBoxLayout(m_analyseDatabaseWidget);
-    m_analyseDatabaseButton = new QPushButton("Analyze Database", this);
+    m_analyseDatabaseButton = new QPushButton("Analitza la base de dades", this);
+
+    m_analyseDatabaseButton->setStyleSheet("padding: 10px; background-color: #2d6f31; color: black; border: none; border-radius: 5px;");
 
     m_analyseDatabaseWidget->setStyleSheet("background-color: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 10px; padding: 15px;");
 
@@ -165,13 +177,13 @@ void MainWindow::setupDatabaseMenu()
     m_databaseGridLayout->setColumnStretch(1, 1);
 
     // 5. Connect buttons with functions
+    connect(m_addAccountButton, &QPushButton::clicked, this, &MainWindow::addAccount);
+    connect(m_modifyAccountButton, &QPushButton::clicked, this, &MainWindow::modifyAccount);
     // Missing
 
     // 6. Add the layout to the stackWidget
     m_stackWidget->addWidget(m_databaseMenuWidget);
 }
-
-
 
 
 void MainWindow::createDatabase()
@@ -211,8 +223,10 @@ void MainWindow::createDatabase()
     {
         file << "ACCOUNT_MANAGEMENT_DATABASE\n";
         file.close();
-        m_nameDatabase = filename;
-        m_openedDatabase = filePath;
+        m_database = new Database();
+        m_database->set_name(filename);
+        m_database->set_path(filePath);
+        m_database->read_database();
         setupDatabaseMenu();
         m_stackWidget->setCurrentWidget(m_databaseMenuWidget);
     }
@@ -244,8 +258,10 @@ void MainWindow::openDatabase()
         if (line == "ACCOUNT_MANAGEMENT_DATABASE")
         {
             file.close();
-            m_nameDatabase = filePath.split("/").takeLast().split(".").takeFirst();
-            m_openedDatabase = filePath;
+            m_database = new Database();
+            m_database->set_name(filePath.split("/").takeLast().split(".").takeFirst());
+            m_database->set_path(filePath);
+            m_database->read_database();
             setupDatabaseMenu();
             m_stackWidget->setCurrentWidget(m_databaseMenuWidget);
         }
@@ -265,4 +281,128 @@ void MainWindow::openDatabase()
 void MainWindow::exitProgram()
 {
     close();
+}
+
+
+void MainWindow::update_summary()
+{
+    m_accountCountLabel->setText("Number of Accounts: " + QString::number(m_database->get_nAccounts()));
+    QString detailsText = "Comptes i balanços:\n";
+    
+    for (int i = 0; i < m_database->get_nAccounts(); i++)
+    {
+        Account* account = m_database->get_account(i);
+        if (account)
+        {
+            detailsText += QString("%1: %2\n").arg(account->get_name()).arg(account->get_money());
+        }
+    }
+    
+    m_accountDetailsLabel->setText(detailsText);
+}
+
+
+void MainWindow::show_last_transactions()
+{
+    QMessageBox::critical(this, "Perdona", "Encara no s'ha implementat aquesta opcio");
+}
+
+
+void MainWindow::addAccount()
+{
+    QDialog dialog(this);
+    dialog.setWindowTitle("Afegeix un compte");
+
+    QLabel bankLabel = QLabel("Banc:", &dialog);
+    QLineEdit bankLineEdit = QLineEdit(&dialog);
+
+    QLabel initialMoneyLabel = QLabel("Diners inicials (Ex: 43.86):", &dialog);
+    QLineEdit initialMoneyLineEdit = QLineEdit(&dialog);
+
+    QPushButton okButton = QPushButton("OK", &dialog);
+    QPushButton cancelButton = QPushButton("Cancella", &dialog);
+
+    connect(&okButton, &QPushButton::clicked, &dialog, &QDialog::accept);
+    connect(&cancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
+
+    QVBoxLayout layout = QVBoxLayout(&dialog);
+    layout.addWidget(&bankLabel);
+    layout.addWidget(&bankLineEdit);
+    layout.addWidget(&initialMoneyLabel);
+    layout.addWidget(&initialMoneyLineEdit);
+    layout.addWidget(&okButton);
+    layout.addWidget(&cancelButton);
+
+    dialog.setStyleSheet(
+        "QLabel { font-weight: bold; }"
+        "QPushButton {"
+        "    background-color: #4CAF50;"
+        "    color: white;"
+        "    font-size: 14px;"
+        "    padding: 8px 16px;"
+        "    border: none;"
+        "    border-radius: 5px;"
+        "}"
+        "QPushButton:hover { background-color: #45a049; }"
+        "QPushButton:pressed { background-color: #3e8e41; }"
+    );
+
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        QString bank = bankLineEdit.text();
+        QString initialMoneyStr = initialMoneyLineEdit.text();
+        
+        bool conversionOk;
+        double initialMoney = initialMoneyStr.toFloat(&conversionOk);
+        
+        if (!conversionOk || initialMoney <= 0.0) {
+            QMessageBox::critical(this, "Error", "Valor dels diners invalid. Escriu un numero valid i positiu");
+            return;
+        }
+        m_database->add_account(bank, initialMoney);
+        update_summary();
+        QMessageBox::information(this, "Compte afegit amb exit!", QString("Banc: %1\nDiners inicials: %2").arg(bank).arg(initialMoney));
+    }
+}
+
+
+void MainWindow::modifyAccount()
+{
+    QMessageBox::critical(this, "Perdona", "Encara no s'ha implementat aquesta opcio");
+}
+
+
+void MainWindow::addTransactio()
+{
+    QMessageBox::critical(this, "Perdona", "Encara no s'ha implementat aquesta opcio");
+}
+
+
+void MainWindow::modifyTransaction()
+{
+    QMessageBox::critical(this, "Perdona", "Encara no s'ha implementat aquesta opcio");
+}
+
+
+void MainWindow::addTransactionsfromFile()
+{
+    QMessageBox::critical(this, "Perdona", "Encara no s'ha implementat aquesta opcio");
+}
+
+
+void MainWindow::saveDatabase()
+{
+    QMessageBox::critical(this, "Perdona", "Encara no s'ha implementat aquesta opcio");
+}
+
+
+void MainWindow::closeDatabase()
+{
+    QMessageBox::critical(this, "Perdona", "Encara no s'ha implementat aquesta opcio");
+}
+
+
+void MainWindow::analyseDatabase()
+{
+    QMessageBox::critical(this, "Perdona", "Encara no s'ha implementat aquesta opcio");
 }

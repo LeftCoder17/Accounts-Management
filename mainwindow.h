@@ -10,12 +10,14 @@
 #include <QStackedWidget>
 #include <QString>
 
+#include "libs/database.h"
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    // Default constructor
+    // Constructor
     MainWindow(QWidget *parent = nullptr);
     // Default destructor
     ~MainWindow();
@@ -32,18 +34,26 @@ private slots:
 
     // 2. Database menu slots
 
+    // 2.1. Summary of the database
+    
+    // Updates the informatin shown in the summary
+    void update_summary();
+    // Show the last transactions added
+    void show_last_transactions();
+    
+
     // 2.2. Edit database
-    /*
+    
     // Adds an account to the database
     void addAccount();
     // Modifies an account from the database
     void modifyAccount();
-    // Adds a movement to the database
-    void addMovement();
-    // Modifies a movement from the database
-    void modifyMovement();
-    // Add movements from a file to the database
-    void addMovementsfromFile();
+    // Adds a transaction to the database
+    void addTransactio();
+    // Modifies a transaction from the database
+    void modifyTransaction();
+    // Add transactions from a file to the database
+    void addTransactionsfromFile();
 
     // 2.3. Manage database
 
@@ -56,7 +66,7 @@ private slots:
 
     // Analyse the database
     void analyseDatabase();
-    */
+    
 
 private:
     // Configure the Main Menu
@@ -90,10 +100,8 @@ private: // Private members
 
     // Layout for the Database menu
     QGridLayout *m_databaseGridLayout;
-    // Path of the opened Database
-    QString m_openedDatabase;
-    // Name of the opened Database
-    QString m_nameDatabase;
+    // Opened Database
+    Database *m_database;
 
     // 2.1. Summary of the database
 
@@ -107,8 +115,8 @@ private: // Private members
     QLabel *m_accountCountLabel;
     // Label with details of the accounts
     QLabel *m_accountDetailsLabel;
-    // Button to show the last movements of the database
-    QPushButton *m_showLastMovementsButton;
+    // Button to show the last transactions of the database
+    QPushButton *m_showLastTransactionsButton;
 
     // 2.2. Edit database
 
@@ -120,12 +128,12 @@ private: // Private members
     QPushButton *m_addAccountButton;
     // Button to modify an account
     QPushButton *m_modifyAccountButton;
-    // Button to add a movement
-    QPushButton *m_addMovementButton;
-    // Button to modify a movement
-    QPushButton *m_modifyMovementButton;
-    // Button to add movements from file
-    QPushButton *m_addMovementsfromFileButton;
+    // Button to add a transaction
+    QPushButton *m_addTransactionButton;
+    // Button to modify a transaction
+    QPushButton *m_modifyTransactionButton;
+    // Button to add transactions from file
+    QPushButton *m_addTransactionsfromFileButton;
 
     // 2.3. Manage the database
 

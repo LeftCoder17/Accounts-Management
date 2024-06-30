@@ -22,6 +22,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Account_Management
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        libs/database.h libs/database.cpp
+        libs/account.h libs/account.cpp
+        libs/transaction.h libs/transaction.cpp
     )
 else()
     add_executable(Account_Management
