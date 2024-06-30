@@ -7,6 +7,7 @@
 #include <QInputDialog>
 #include <QCoreApplication>
 #include <QDialog>
+#include <QComboBox>
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -374,7 +375,65 @@ void MainWindow::modifyAccount()
 
 void MainWindow::addTransactio()
 {
-    QMessageBox::critical(this, "Perdona", "Encara no s'ha implementat aquesta opcio");
+    QDialog dialog(this);
+    dialog.setWindowTitle("Afegeix una transaccio");
+
+    QLabel bankLabel = QLabel("Selecciona Banc:", &dialog);
+    QComboBox bankComboBox(&dialog);
+    std::vector<QString> accountsNames = m_database->get_accounts_names_vector();
+    QStringList boxItems;
+    for (const QString& option : accountsNames) {
+        boxItems << option;
+    }
+    bankComboBox.addItems(QStringList::fromVector(boxItems));
+
+    QLabel initialMoneyLabel = QLabel("Diners inicials (Ex: 43.86):", &dialog);
+    QLineEdit initialMoneyLineEdit = QLineEdit(&dialog);
+
+    QPushButton okButton = QPushButton("OK", &dialog);
+    QPushButton cancelButton = QPushButton("Cancella", &dialog);
+
+    connect(&okButton, &QPushButton::clicked, &dialog, &QDialog::accept);
+    connect(&cancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
+
+    QVBoxLayout layout = QVBoxLayout(&dialog);
+    layout.addWidget(&bankLabel);
+    layout.addWidget(&bankComboBox);
+    layout.addWidget(&initialMoneyLabel);
+    layout.addWidget(&initialMoneyLineEdit);
+    layout.addWidget(&okButton);
+    layout.addWidget(&cancelButton);
+
+    dialog.setStyleSheet(
+        "QLabel { font-weight: bold; }"
+        "QPushButton {"
+        "    background-color: #4CAF50;"
+        "    color: white;"
+        "    font-size: 14px;"
+        "    padding: 8px 16px;"
+        "    border: none;"
+        "    border-radius: 5px;"
+        "}"
+        "QPushButton:hover { background-color: #45a049; }"
+        "QPushButton:pressed { background-color: #3e8e41; }"
+    );
+
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        QString bank = bankLineEdit.text();
+        QString initialMoneyStr = initialMoneyLineEdit.text();
+        
+        bool conversionOk;
+        double initialMoney = initialMoneyStr.toFloat(&conversionOk);
+        
+        if (!conversionOk || initialMoney <= 0.0) {
+            QMessageBox::critical(this, "Error", "Valor dels diners invalid. Escriu un numero valid i positiu");
+            return;
+        }
+        m_database->add_account(bank, initialMoney);
+        update_summary();
+        QMessageBox::information(this, "Compte afegit amb exit!", QString("Banc: %1\nDiners inicials: %2").arg(bank).arg(initialMoney));
+    }
 }
 
 

@@ -1,0 +1,53 @@
+TIPUS DE PAGAMENTS
+5
+0 Casa
+1 Menjar
+2 Entreteniment
+3 Cultura
+4 Altres
+(0)SUBTIPUS PAGAMENT CASA
+6
+0 Lloguer
+1 Gas
+2 Electricitat
+3 Aigua
+4 Internet
+5 Altres
+(1)SUBTIPUS PAGAMENT MENJAR
+4
+0 Casa
+1 Restaurant
+2 PerEndur
+3 Bar
+(2)SUBTIPUS PAGAMENT ENTRETENIMENT
+3
+0 Videojoc
+1 JocDeTaula
+2 Vacances
+(3)SUBTIPUS PAGAMENT CULTURA
+2
+0 Llibre
+1 Teatre
+2 Cinema
+(4)SUBTIPUS PAGAMENT ALTRES
+3
+0 Deute
+1 Regal
+2 Altres
+TIPUS D'INGRESSOS
+3
+0 Feina
+1 Pension
+2 Altres
+(0)SUBTIPUS INGRES FEINA
+1
+0 Amphos
+(1)SUBTIPUS INGRES PENSIO
+2
+0 DeuteMama
+1 Orfandat
+(2)SUBTIPUS INGRES ALTRES
+3
+0 Deute
+1 Regal
+2 Altres

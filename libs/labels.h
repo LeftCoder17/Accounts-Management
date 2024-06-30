@@ -1,34 +1,35 @@
 #ifndef LABELS_H
 #define LABELS_H
 
-// Enumeration for payment types
-typedef enum Ptype {house, food, entertainment, culture, others};
+#include <string>
 
-// Enumeration for house payment subtypes
-typedef enum HousePSubtype {rent, gas, electricity, water, internet, others};
+typedef struct
+{
+    std::string label;
+    int code;
+} LabelSubtype;
 
-// Enumeration for food payment subtypes
-typedef enum FoodPSubtype {house, restaurant, takeAway, bar};
+typedef struct LabelType
+{
+    std::string label;
+    int code;
+    int nSubtypes;
+    LabelSubtype *subtypes;
+} LabelType;
 
-// Enumeration for entertainment payment subtypes
-typedef enum EntertainmentPSubtype {theater, cinema, holidays};
+class TransactionTypes
+{
+public:
+    // Constructor
+    TransactionTypes();
+    // Destructor
+    ~TransactionTypes();
 
-// Enumeration for culture payment subtypes
-typedef enum CulturePSubtype {book, videogame};
-
-// Enumeration for other payment subtypes
-typedef enum OtherPSubtype {debt, gift, other};
-
-// Enumeration for income types
-typedef enum Itype {work, pension, others};
-
-// Enumeration for work income subtypes
-typedef enum WorkISubtype {amphos};
-
-// Enumeration for pension income subtypes
-typedef enum PensionISubtype {momDebt, state};
-
-// Enumeration for other income subtypes
-typedef enum OtherISubtype {debt, gift, other};
+public: // Members
+    int m_nPaymentTypes {};
+    int m_nIncomeTypes {};
+    LabelType *m_paymentTypes {nullptr};
+    LabelType *m_incomeTypes {nullptr};
+};
 
 #endif // LABELS_H

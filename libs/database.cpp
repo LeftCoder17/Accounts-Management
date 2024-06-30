@@ -62,6 +62,17 @@ Account* Database::get_account(int index)
 }
 
 
+std::vector<QString> Database::get_accounts_names_vector()
+{
+    std::vector<QString> namesVector {};
+    for (Account *account : m_accounts)
+    {
+        namesVector.push_back(account->get_name());
+    }
+    return namesVector;
+}
+
+
 void Database::set_name(QString name)
 {
     m_name = name;

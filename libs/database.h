@@ -27,10 +27,11 @@ public:
     int get_nAccounts();
     QString get_name();
     QString get_path();
+    std::vector<QString> get_accounts_names_vector();
     Account *get_account(int index);
 
     // Setters
-    
+
     void set_name(QString name);
     void set_path(QString path);
 
