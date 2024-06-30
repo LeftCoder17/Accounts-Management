@@ -1,0 +1,17 @@
+# ninja log v6
+11	706	7414386122704178	Account_Management_autogen/timestamp	a6bd3bff16dfc37e
+11	706	7414386122704178	Account_Management_autogen/mocs_compilation.cpp	a6bd3bff16dfc37e
+11	706	7414386122704178	C:/Users/xavie/Desktop/Guardades/Programs/Github/Accounts_Management/build/Desktop_Qt_6_7_1_MinGW_64_bit-Debug/Account_Management_autogen/timestamp	a6bd3bff16dfc37e
+11	706	7414386122704178	C:/Users/xavie/Desktop/Guardades/Programs/Github/Accounts_Management/build/Desktop_Qt_6_7_1_MinGW_64_bit-Debug/Account_Management_autogen/mocs_compilation.cpp	a6bd3bff16dfc37e
+716	2569	7414386123614178	CMakeFiles/Account_Management.dir/main.cpp.obj	ff493a23e95a917d
+706	2631	7414386123524173	CMakeFiles/Account_Management.dir/Account_Management_autogen/mocs_compilation.cpp.obj	8f42b7b2c83bc820
+727	2882	7414386123734173	CMakeFiles/Account_Management.dir/mainwindow.cpp.obj	2dcfde44a62b11d6
+2882	3066	7414386145274224	Account_Management.exe	6a6cb2427cfca732
+20	587	7414388185387534	Account_Management_autogen/timestamp	a6bd3bff16dfc37e
+20	587	7414388185387534	Account_Management_autogen/mocs_compilation.cpp	a6bd3bff16dfc37e
+20	587	7414388185387534	C:/Users/xavie/Desktop/Guardades/Programs/Github/Accounts_Management/build/Desktop_Qt_6_7_1_MinGW_64_bit-Debug/Account_Management_autogen/timestamp	a6bd3bff16dfc37e
+20	587	7414388185387534	C:/Users/xavie/Desktop/Guardades/Programs/Github/Accounts_Management/build/Desktop_Qt_6_7_1_MinGW_64_bit-Debug/Account_Management_autogen/mocs_compilation.cpp	a6bd3bff16dfc37e
+594	2344	7414388186177538	CMakeFiles/Account_Management.dir/main.cpp.obj	ff493a23e95a917d
+587	2371	7414388186107538	CMakeFiles/Account_Management.dir/Account_Management_autogen/mocs_compilation.cpp.obj	8f42b7b2c83bc820
+603	2644	7414388186267536	CMakeFiles/Account_Management.dir/mainwindow.cpp.obj	2dcfde44a62b11d6
+2644	2825	7414388206677530	Account_Management.exe	6a6cb2427cfca732

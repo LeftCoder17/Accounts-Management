@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/Qt/6.7.1/mingw_64/bin",
+                "C:/Qt/6.7.1/mingw_64/include",
+                "C:/Qt/6.7.1/mingw_64/lib",
+                "C:/Qt/6.7.1/mingw_64/include/QtWidgets",
+                "C:/Qt/6.7.1/mingw_64/include/QtSvg",
+                "C:/Qt/6.7.1/mingw_64/include/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.22621.0",
+            "compilerPath": "cl.exe",
+            "intelliSenseMode": "windows-msvc-x64",
+        }
+    ],
+    "version": 4
+}
