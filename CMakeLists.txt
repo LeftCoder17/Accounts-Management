@@ -13,16 +13,19 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
+    main.cpp
+    mainwindow.cpp
+    mainwindow.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Account_Management
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-
+    )
+else()
+    add_executable(Account_Management
+        ${PROJECT_SOURCES}
     )
 endif()
 
@@ -31,14 +34,10 @@ target_link_libraries(Account_Management PRIVATE
 )
 
 set_target_properties(Account_Management PROPERTIES
-    ${BUNDLE_ID_OPTION}
     WIN32_EXECUTABLE TRUE
 )
 
-include(GNUInstallDirs)
 install(TARGETS Account_Management
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 

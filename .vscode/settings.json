@@ -90,6 +90,10 @@
         "xutility": "cpp",
         "qdebug": "cpp",
         "qwidget": "cpp",
-        "qmainwindow": "cpp"
+        "qmainwindow": "cpp",
+        "qfiledialog": "cpp",
+        "qvboxlayout": "cpp",
+        "qmessagebox": "cpp",
+        "fstream": "cpp"
     }
 }
