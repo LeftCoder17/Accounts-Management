@@ -615,7 +615,70 @@ void MainWindow::saveDatabase()
 
 void MainWindow::closeDatabase()
 {
-    QMessageBox::critical(this, "Perdona", "Encara no s'ha implementat aquesta opcio");
+    // 1. Check whether there are unsaved changes or not 
+
+    if (m_unsavedChanges)
+    {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Compte!");
+        msgBox.setText("Hi ha canvis sense desar que es perdran. Vols tancar igualment?");
+        QAbstractButton *yesButton = msgBox.addButton(tr("Si"), QMessageBox::YesRole);
+        QAbstractButton *noButton = msgBox.addButton(tr("No"), QMessageBox::YesRole);
+        msgBox.exec();
+        if (msgBox.clickedButton() == noButton) return; // User canceled the action 
+    }
+
+    // 2. Switch the menu
+
+    m_stackWidget->setCurrentWidget(m_mainMenuWidget);
+
+    // 3. Delete allocated memory
+    // 3.1. Transactions
+
+    delete m_transactionLabels;
+
+    // 3.2. Summary section
+
+    delete m_databaseNameLabel;
+    delete m_accountCountLabel;
+    delete m_accountDetailsLabel;
+    delete m_showLastTransactionsButton;
+    delete m_summaryLayout;
+    delete m_summaryWidget;
+
+    // 3.3. Edit section
+
+    delete m_addAccountButton;
+    delete m_modifyAccountButton;
+    delete m_addTransactionButton;
+    delete m_modifyTransactionButton;
+    delete m_addTransactionsfromFileButton;
+    delete m_editLayout;
+    delete m_editWidget;
+
+    // 3.4. Manage section
+
+    delete m_saveDatabaseButton;
+    delete m_closeDatabaseButton;
+    delete m_manageDatabaseLayout;
+    delete m_manageDatabaseWidget;
+
+    // 3.5. Analyse section
+
+    delete m_analyseDatabaseButton;
+    delete m_analyseDatabaseLayout;
+    delete m_analyseDatabaseWidget;
+
+
+    // 3.6. Menu Layout and Widget
+
+    delete m_databaseGridLayout;
+    delete m_databaseMenuWidget;
+
+    // 3.7. Database
+
+    delete m_database;
+
 }
 
 
