@@ -11,12 +11,12 @@ class Database
 {
 public:
     // Default constructor
-    Database();
+    Database() = default;
     // Destructor
     ~Database();
 
     // Read the database to upload the information
-    void read_database();
+    void read_database(QWidget *parent);
 
     // Store the database
     void store_database(QWidget *parent);

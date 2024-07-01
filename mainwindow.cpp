@@ -239,7 +239,6 @@ void MainWindow::createDatabase()
         m_database = new Database();
         m_database->set_name(filename);
         m_database->set_path(filePath);
-        m_database->read_database();
         setupDatabaseMenu();
         m_stackWidget->setCurrentWidget(m_databaseMenuWidget);
     }
@@ -274,7 +273,7 @@ void MainWindow::openDatabase()
             m_database = new Database();
             m_database->set_name(filePath.split("/").takeLast().split(".").takeFirst());
             m_database->set_path(filePath);
-            m_database->read_database();
+            m_database->read_database(this);
             setupDatabaseMenu();
             m_stackWidget->setCurrentWidget(m_databaseMenuWidget);
         }

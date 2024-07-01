@@ -1,13 +1,10 @@
 #include "database.h"
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <QMessageBox>
 #include <QDate>
 #include <QString>
-
-Database::Database()
-{
-}
 
 
 Database::~Database()
@@ -20,9 +17,83 @@ Database::~Database()
 
 
 
-void Database::read_database()
+void Database::read_database(QWidget *parent)
 {
-    // Missing
+    std::ifstream file;
+    file.open(m_path.toStdString().c_str());
+
+    if (!file.is_open())
+    {
+        QMessageBox::critical(parent, "Error", "No s'ha pogut obrir el fitxer");
+        return;
+    }
+
+    std::string line;
+    std::getline(file, line); // Ignore header
+
+    // 1. Read number of accounts
+
+    std::getline(file, line);
+    std::istringstream iss(line);
+    std::string aux;
+    int nAccounts;
+    iss >> aux >> aux >> aux >> nAccounts;
+
+    // 2. Read accounts
+
+    for (int index = 0; index < nAccounts; index++)
+    {
+        std::getline(file, line); // Ignore separator
+
+        // 2.1. Add account
+
+        std::getline(file, line); // Account name
+        std::string accountName;
+        std::istringstream accountLine(line);
+        accountLine >> aux >> aux >> aux >> accountName;
+        std::getline(file, line); // Money
+        std::string moneyStr;
+        std::istringstream moneyLine(line);
+        moneyLine >> aux >> moneyStr;
+        float money = std::stof(moneyStr);
+
+        add_account(QString::fromStdString(accountName), money);
+
+        // 2.2. Add transactions
+        std::getline(file, line); // Number of transactions
+        std::string nTransactionStr;
+        std::istringstream nTransactionsLine(line);
+        nTransactionsLine >> aux >> aux >> aux >> nTransactionStr;
+        int numTransactions = std::stoi(nTransactionStr);
+        std::getline(file, line); // Ignore separator
+        for (int transIndex = 0; transIndex < numTransactions; transIndex++)
+        {
+            std::getline(file, line); // Transaction
+            std::string transactionType, type, subtype, valueStr, dateStr;
+            std::istringstream transactionLine(line);
+            std::getline(transactionLine, transactionType, ',');
+            std::getline(transactionLine, type, ',');
+            std::getline(transactionLine, subtype, ',');
+            std::getline(transactionLine, valueStr, ',');
+            std::getline(transactionLine, dateStr);
+            
+            bool isPayment = (transactionType == "Despesa");
+            float value = std::stoi(valueStr);
+            QDate date = QDate::fromString(QString::fromStdString(dateStr));
+
+            add_transaction(QString::fromStdString(accountName),
+                            isPayment,
+                            QString::fromStdString(type),
+                            QString::fromStdString(subtype),
+                            value,
+                            date);
+        }
+        Account *currAccount = get_account(index);
+        currAccount->set_money(money);
+    }
+
+    // 3. Close file
+    file.close();
 }
 
 

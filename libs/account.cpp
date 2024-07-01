@@ -47,3 +47,9 @@ Transaction* Account::get_transaction(int index)
 {
     return m_transactions.at(index);
 }
+
+
+void Account::set_money(float money)
+{
+    m_money = money;
+}

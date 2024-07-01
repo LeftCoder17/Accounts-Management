@@ -20,14 +20,14 @@ public:
     void add_transaction(bool isPayment, QString type, QString subtype, float money, QDate date);
 
     // Getters
+    
     QString get_name();
     float get_money();
     int get_nTransactions();
     Transaction* get_transaction(int index);
 
-
-
     // Setters
+    void set_money(float money);
 
 
 private: // Members
