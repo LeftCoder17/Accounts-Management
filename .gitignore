@@ -1,4 +1,4 @@
 CMakeLists.txt.user
 /build
 /databases/*.txt
-labels copy.txt
+labels.txt
