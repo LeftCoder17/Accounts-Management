@@ -17,6 +17,13 @@ The aim of the app is to manage your accounts and money, not only to have a cont
 1. For some combinations in the ComboBoxes of the "add_transaction" function, the app crashes. I haven't still tried to debug it very much, so maybe it is easy to solve with basic Qt knowledge.
 
 ## Further development
-Taking into account that it is not finished, finishing it is the main goal here. However, these are the basic things that are still missing:
+Taking into account that it is not finished, finishing it is the main goal here. Therefore, these are the basic things that are still missing:
 
-1. 
+1. Implement show_last_transactions()
+2. Implement modifyAccount()
+3. Implement modifytransaction()
+4. Implement different analyses of the database
+5. Take a look into the different types of variables like string and QString to decide the criteria.
+
+And, obviusly, apart from all that:
+1. Make it more appealing
