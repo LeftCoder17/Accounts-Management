@@ -1,4 +1,9 @@
 #include "database.h"
+#include <fstream>
+#include <string>
+#include <QMessageBox>
+#include <QDate>
+#include <QString>
 
 Database::Database()
 {
@@ -21,9 +26,35 @@ void Database::read_database()
 }
 
 
-void Database::store_database()
+void Database::store_database(QWidget *parent)
 {
-    // Missing
+    std::ofstream file;
+    file.open(m_path.toStdString().c_str());
+
+    if (!file.is_open())
+    {
+        QMessageBox::critical(parent, "Error", "No s'ha pogut obrir el fitxer");
+        return;
+    }
+    file << "ACCOUNT_MANAGEMENT_DATABASE\n";
+    file << "Nombre de comptes: " << m_nAccounts << std::endl;
+    for (Account* account : m_accounts)
+    {
+        file << "##########################################" << std::endl;
+        file << "Nom del compte: " << account->get_name().toStdString() << std::endl;
+        file << "Diners: " << account->get_money() << std::endl;
+        int nTransactions = account->get_nTransactions();
+        file << "Nombre de transaccions: " << nTransactions << std::endl;
+        file << "-----------------------------" << std::endl;
+        for (int index = 0; index < nTransactions; index++)
+        {
+            Transaction *transaction = account->get_transaction(index);
+            std::string transactionType = transaction->m_isPayment ? "Despesa" : "Ingres";
+            file << transactionType << "," << transaction->m_type.toStdString() << "," << transaction->m_subtype.toStdString();
+            file << "," << transaction->m_value << "," << transaction->m_date.toString().toStdString() << std::endl;
+        }
+    }
+    file.close();
 }
 
 

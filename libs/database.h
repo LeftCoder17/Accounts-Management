@@ -2,6 +2,7 @@
 #define DATABASE_H
 
 #include <vector>
+#include <QWidget>
 #include <QString>
 #include <QDate>
 #include "account.h"
@@ -18,7 +19,7 @@ public:
     void read_database();
 
     // Store the database
-    void store_database();
+    void store_database(QWidget *parent);
 
     // Add a new account
     void add_account(QString accountName, float initialMoney);

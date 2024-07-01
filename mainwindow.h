@@ -104,6 +104,8 @@ private: // Private members
     Database *m_database;
     // Transaction labels
     TransactionLabels *m_transactionLabels;
+    // Controls if there are changes without being saved
+    bool m_unsavedChanges;
 
     // 2.1. Summary of the database
 

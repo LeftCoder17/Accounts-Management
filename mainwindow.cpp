@@ -95,6 +95,7 @@ void MainWindow::setupDatabaseMenu()
     // 0. Read the database and the transaction labels
     // Missing
     m_transactionLabels = new TransactionLabels();
+    m_unsavedChanges = false;
 
     // 1. Initialize objects of the database menu
     m_databaseMenuWidget = new QWidget(this);
@@ -182,6 +183,7 @@ void MainWindow::setupDatabaseMenu()
     m_databaseGridLayout->setColumnStretch(1, 1);
 
     // 5. Connect buttons with functions
+    connect(m_showLastTransactionsButton, &QPushButton::clicked, this, &MainWindow::show_last_transactions);
     connect(m_addAccountButton, &QPushButton::clicked, this, &MainWindow::addAccount);
     connect(m_modifyAccountButton, &QPushButton::clicked, this, &MainWindow::modifyAccount);
     connect(m_addTransactionButton, &QPushButton::clicked, this, &MainWindow::addTransaction);
@@ -372,6 +374,7 @@ void MainWindow::addAccount()
         }
         m_database->add_account(bank, initialMoney);
         update_summary();
+        m_unsavedChanges = true;
         QMessageBox::information(this, "Compte afegit amb exit!", QString("Banc: %1\nDiners inicials: %2").arg(bank).arg(initialMoney));
     }
 }
@@ -576,6 +579,7 @@ void MainWindow::addTransaction()
         }
         m_database->add_transaction(account, isPayment, type, subtype, money, date);
         update_summary();
+        m_unsavedChanges = true;
         QMessageBox::information(this, "Transaccio afegida amb exit!",
                                 QString("Banc: %1\nTransaccio: %2\nTipus: %3\nSubtipus: %4\nValor: %5\nData: %6").arg(account).arg(transaction).arg(type).arg(subtype).arg(moneyStr).arg(date.toString()));
     }
@@ -596,7 +600,16 @@ void MainWindow::addTransactionsfromFile()
 
 void MainWindow::saveDatabase()
 {
-    QMessageBox::critical(this, "Perdona", "Encara no s'ha implementat aquesta opcio");
+    if (!m_unsavedChanges)
+    {
+        QMessageBox::information(this, "Avis",
+                                QString("No hi ha hagut canvis des de que s'ha obert o desat l'arxiu per ultim cop"));
+        return;
+    }
+    m_database->store_database(this);
+    m_unsavedChanges = false;
+    QMessageBox::information(this, "Finalitzat",
+                                QString("La base de dades s'ha desat amb exit"));
 }
 
 

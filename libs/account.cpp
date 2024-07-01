@@ -35,3 +35,15 @@ float Account::get_money()
 {
     return m_money;
 }
+
+
+int Account::get_nTransactions()
+{
+    return m_nTransactions;
+}
+
+
+Transaction* Account::get_transaction(int index)
+{
+    return m_transactions.at(index);
+}

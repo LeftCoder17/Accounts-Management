@@ -22,6 +22,8 @@ public:
     // Getters
     QString get_name();
     float get_money();
+    int get_nTransactions();
+    Transaction* get_transaction(int index);
 
 
 
