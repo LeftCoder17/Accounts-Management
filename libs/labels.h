@@ -1,35 +1,38 @@
 #ifndef LABELS_H
 #define LABELS_H
 
-#include <string>
+#include <QString>
+#include <vector>
 
 typedef struct
 {
-    std::string label;
+    QString label;
     int code;
 } LabelSubtype;
 
 typedef struct LabelType
 {
-    std::string label;
+    QString label;
     int code;
     int nSubtypes;
-    LabelSubtype *subtypes;
+    std::vector<LabelSubtype> subtypes;
 } LabelType;
 
-class TransactionTypes
+class TransactionLabels
 {
 public:
     // Constructor
-    TransactionTypes();
+    TransactionLabels();
     // Destructor
-    ~TransactionTypes();
+    ~TransactionLabels();
+
+
 
 public: // Members
     int m_nPaymentTypes {};
     int m_nIncomeTypes {};
-    LabelType *m_paymentTypes {nullptr};
-    LabelType *m_incomeTypes {nullptr};
+    std::vector<LabelType> m_paymentTypes {};
+    std::vector<LabelType> m_incomeTypes {};
 };
 
 #endif // LABELS_H

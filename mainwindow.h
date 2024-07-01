@@ -49,7 +49,7 @@ private slots:
     // Modifies an account from the database
     void modifyAccount();
     // Adds a transaction to the database
-    void addTransactio();
+    void addTransaction();
     // Modifies a transaction from the database
     void modifyTransaction();
     // Add transactions from a file to the database
@@ -102,6 +102,8 @@ private: // Private members
     QGridLayout *m_databaseGridLayout;
     // Opened Database
     Database *m_database;
+    // Transaction labels
+    TransactionLabels *m_transactionLabels;
 
     // 2.1. Summary of the database
 

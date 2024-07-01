@@ -1,114 +1,108 @@
 #include "labels.h"
-#include <fstream>
-#include <sstream>
+#include <QDebug>
+#include <QFile>
+#include <QTextStream>
 
-TransactionTypes::TransactionTypes()
+
+TransactionLabels::TransactionLabels()
 {
-    // 1. Open file
-    std::ifstream labelsFile;
-    labelsFile.open("labels.txt");
-
-    std::string line;
-    int index_type, index_subtype;
-
-    std::getline(labelsFile, line); // Ignore
-
-    // 2. Read Payment Types
-    std::getline(labelsFile, line);
-    m_nPaymentTypes = std::stoi(line);
-    m_paymentTypes = new LabelType[m_nPaymentTypes];
-
-    for (index_type = 0; index_type < m_nPaymentTypes; index_type++)
-    {
-        std::getline(labelsFile, line);
-
-        std::istringstream ss(line);
-        std::string code, label;
-
-        ss >> code >> label;
-
-        m_paymentTypes[index_type].code = std::stoi(code);
-        m_paymentTypes[index_type].label = label;
+    // 1. Open file using QFile
+    QFile file(":/labels.txt");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCritical() << "Failed to open labels file:" << file.errorString();
+        return;
     }
 
-    // 3. Read Payment Subtypes
-    for (index_type = 0; index_type < m_nPaymentTypes; index_type++)
+    QTextStream labelsFile(&file);
+
+    // 2. Read the first line (if needed)
+    QString line = labelsFile.readLine(); // Read first line
+
+    // 3. Read Payment Types
+    line = labelsFile.readLine(); // Read next line
+    m_nPaymentTypes = line.toInt();
+
+    for (int index_type = 0; index_type < m_nPaymentTypes; index_type++)
     {
-        std::getline(labelsFile, line); // Ignore
-        std::getline(labelsFile, line);
-        m_paymentTypes[index_type].nSubtypes = std::stoi(line);
-        m_paymentTypes[index_type].subtypes = new LabelSubtype[m_paymentTypes[index_type].nSubtypes];
+        line = labelsFile.readLine().trimmed(); // Read next line and trim whitespace
 
-        for (index_subtype = 0; index_subtype < m_paymentTypes[index_type].nSubtypes; index_subtype++)
-        {
-            std::getline(labelsFile, line);
-
-            std::istringstream ss(line);
-            std::string code, label;
-
-            ss >> code >> label;
-
-            m_paymentTypes[index_type].subtypes[index_subtype].code = std::stoi(code);
-            m_paymentTypes[index_type].subtypes[index_subtype].label = label;
+        QStringList parts = line.split(" ");
+        if (parts.size() >= 2) {
+            LabelType newLabelType;
+            newLabelType.code = parts[0].toInt();
+            newLabelType.label = parts.mid(1).join(" ");
+            m_paymentTypes.push_back(newLabelType);
         }
     }
 
-    // 4. Read Income Types
-    std::getline(labelsFile, line); // Ignore
-    std::getline(labelsFile, line);
-    m_nIncomeTypes = std::stoi(line);
-    m_incomeTypes = new LabelType[m_nIncomeTypes];
-
-    for (index_type = 0; index_type < m_nIncomeTypes; index_type++)
+    // 4. Read Payment Subtypes
+    for (int index_type = 0; index_type < m_nPaymentTypes; index_type++)
     {
-        std::getline(labelsFile, line);
+        labelsFile.readLine(); // Ignore
+        line = labelsFile.readLine().trimmed();
 
-        std::istringstream ss(line);
-        std::string code, label;
+        int nSubtypes = line.toInt();
+        m_paymentTypes[index_type].nSubtypes = nSubtypes;
 
-        ss >> code >> label;
-
-        m_incomeTypes[index_type].code = std::stoi(code);
-        m_incomeTypes[index_type].label = label;
-    }
-
-    // 5. Read Income Subtypes
-    for (index_type = 0; index_type < m_nPaymentTypes; index_type++)
-    {
-        std::getline(labelsFile, line); // Ignore
-        std::getline(labelsFile, line);
-        m_incomeTypes[index_type].nSubtypes = std::stoi(line);
-        m_incomeTypes[index_type].subtypes = new LabelSubtype[m_incomeTypes[index_type].nSubtypes];
-
-        for (index_subtype = 0; index_subtype < m_incomeTypes[index_type].nSubtypes; index_subtype++)
+        for (int index_subtype = 0; index_subtype < nSubtypes; index_subtype++)
         {
-            std::getline(labelsFile, line);
+            line = labelsFile.readLine().trimmed();
 
-            std::istringstream ss(line);
-            std::string code, label;
-
-            ss >> code >> label;
-
-            m_incomeTypes[index_type].subtypes[index_subtype].code = std::stoi(code);
-            m_incomeTypes[index_type].subtypes[index_subtype].label = label;
+            QStringList parts = line.split(" ");
+            if (parts.size() >= 2) {
+                LabelSubtype newLabelSubtype;
+                newLabelSubtype.code = parts[0].toInt();
+                newLabelSubtype.label = parts.mid(1).join(" ");
+                m_paymentTypes[index_type].subtypes.push_back(newLabelSubtype);
+            }
         }
     }
 
-    // 6. Close file
-    labelsFile.close();
+    // 5. Read Income Types
+    labelsFile.readLine(); // Ignore
+    line = labelsFile.readLine().trimmed();
+    m_nIncomeTypes = line.toInt();
+
+    for (int index_type = 0; index_type < m_nIncomeTypes; index_type++)
+    {
+        line = labelsFile.readLine().trimmed();
+
+        QStringList parts = line.split(" ");
+        if (parts.size() >= 2) {
+            LabelType newLabelType;
+            newLabelType.code = parts[0].toInt();
+            newLabelType.label = parts.mid(1).join(" ");
+            m_incomeTypes.push_back(newLabelType);
+        }
+    }
+
+    // 6. Read Income Subtypes
+    for (int index_type = 0; index_type < m_nIncomeTypes; index_type++)
+    {
+        labelsFile.readLine(); // Ignore
+        line = labelsFile.readLine().trimmed();
+
+        int nSubtypes = line.toInt();
+        m_incomeTypes[index_type].nSubtypes = nSubtypes;
+
+        for (int index_subtype = 0; index_subtype < nSubtypes; index_subtype++)
+        {
+            line = labelsFile.readLine().trimmed();
+
+            QStringList parts = line.split(" ");
+            if (parts.size() >= 2) {
+                LabelSubtype newLabelSubtype;
+                newLabelSubtype.code = parts[0].toInt();
+                newLabelSubtype.label = parts.mid(1).join(" ");
+                m_incomeTypes[index_type].subtypes.push_back(newLabelSubtype);
+            }
+        }
+    }
+
+    // 7. Close file
+    file.close();
 }
 
-TransactionTypes::~TransactionTypes()
+TransactionLabels::~TransactionLabels()
 {
-    int index;
-    for (index = 0; index < m_nPaymentTypes; index++)
-    {
-        delete m_paymentTypes[index].subtypes;
-    }
-    for (index = 0; index < m_nIncomeTypes; index++)
-    {
-        delete m_incomeTypes[index].subtypes;
-    }
-    delete m_paymentTypes;
-    delete m_incomeTypes;
 }

@@ -8,6 +8,9 @@
 #include <QCoreApplication>
 #include <QDialog>
 #include <QComboBox>
+#include <QStringList>
+#include <QDateEdit>
+#include <QDate>
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -89,8 +92,9 @@ void MainWindow::setupMainMenu()
 
 void MainWindow::setupDatabaseMenu()
 {
-    // 0. Read the database
+    // 0. Read the database and the transaction labels
     // Missing
+    m_transactionLabels = new TransactionLabels();
 
     // 1. Initialize objects of the database menu
     m_databaseMenuWidget = new QWidget(this);
@@ -180,6 +184,12 @@ void MainWindow::setupDatabaseMenu()
     // 5. Connect buttons with functions
     connect(m_addAccountButton, &QPushButton::clicked, this, &MainWindow::addAccount);
     connect(m_modifyAccountButton, &QPushButton::clicked, this, &MainWindow::modifyAccount);
+    connect(m_addTransactionButton, &QPushButton::clicked, this, &MainWindow::addTransaction);
+    connect(m_modifyTransactionButton, &QPushButton::clicked, this, &MainWindow::modifyTransaction);
+    connect(m_addTransactionsfromFileButton, &QPushButton::clicked, this, &MainWindow::addTransactionsfromFile);
+    connect(m_saveDatabaseButton, &QPushButton::clicked, this, &MainWindow::saveDatabase);
+    connect(m_closeDatabaseButton, &QPushButton::clicked, this, &MainWindow::closeDatabase);
+    connect(m_analyseDatabaseButton, &QPushButton::clicked, this, &MainWindow::analyseDatabase);
     // Missing
 
     // 6. Add the layout to the stackWidget
@@ -373,34 +383,131 @@ void MainWindow::modifyAccount()
 }
 
 
-void MainWindow::addTransactio()
+void MainWindow::addTransaction()
 {
     QDialog dialog(this);
     dialog.setWindowTitle("Afegeix una transaccio");
 
-    QLabel bankLabel = QLabel("Selecciona Banc:", &dialog);
-    QComboBox bankComboBox(&dialog);
-    std::vector<QString> accountsNames = m_database->get_accounts_names_vector();
-    QStringList boxItems;
-    for (const QString& option : accountsNames) {
-        boxItems << option;
-    }
-    bankComboBox.addItems(QStringList::fromVector(boxItems));
+    // 1. Select the account
 
-    QLabel initialMoneyLabel = QLabel("Diners inicials (Ex: 43.86):", &dialog);
-    QLineEdit initialMoneyLineEdit = QLineEdit(&dialog);
+    QLabel accountLabel = QLabel("Selecciona Compte:", &dialog);
+    QComboBox accountComboBox(&dialog);
+    std::vector<QString> accountsNames = m_database->get_accounts_names_vector();
+    QStringList accountItems;
+    for (const QString& option : accountsNames) {
+        accountItems << option;
+    }
+    accountComboBox.addItems(QStringList::fromVector(accountItems));
+
+    // 2. Select transaction type
+
+    QLabel transactionTypeLabel = QLabel("Selecciona tipus de transaccio:", &dialog);
+    QComboBox transactionTypeComboBox(&dialog);
+    QStringList transactionTypeItems = {"Despesa", "Ingres"};
+    transactionTypeComboBox.addItems(transactionTypeItems);
+    //transactionTypeComboBox.clear();
+    
+    // 3. Select Payment/Income type
+
+    QLabel typeLabel = QLabel("Tipus:", &dialog);
+    QComboBox *typeComboBox = new QComboBox(&dialog);
+
+    connect(&transactionTypeComboBox, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, [=](const QString& transactionType)
+    {
+        typeComboBox->clear();
+        QStringList typeItems;
+        if (transactionType == "Despesa")
+        {
+            for (const LabelType& labelType : m_transactionLabels->m_paymentTypes)
+            {
+                typeItems << labelType.label;
+            }
+        }
+        else if (transactionType == "Ingres")
+        {
+            for (const LabelType& labelType : m_transactionLabels->m_incomeTypes)
+            {
+                typeItems << labelType.label;
+            }
+        }
+        typeComboBox->addItems(typeItems);
+    });
+
+    // 4. Select subtype
+
+    QLabel subtypeLabel = QLabel("Subtipus:", &dialog);
+    QComboBox *subtypeComboBox = new QComboBox(&dialog);
+
+    connect(typeComboBox, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, [=, &transactionTypeComboBox](const QString& typeLabel)
+    {
+        subtypeComboBox->clear();
+        QStringList subtypeItems;
+        int typeCode;
+        QString transactionType = transactionTypeComboBox.currentText();
+        if (transactionType == "Despesa")
+        {
+            for (const LabelType& labelType : m_transactionLabels->m_paymentTypes)
+            {
+                if (typeLabel == labelType.label)
+                {
+                    typeCode = labelType.code;
+                    break;
+                }
+            }
+            for (const LabelSubtype& subtype : m_transactionLabels->m_paymentTypes[typeCode].subtypes)
+            {
+                subtypeItems << subtype.label;
+            }
+        }
+        else
+        {
+            for (const LabelType& labelType : m_transactionLabels->m_incomeTypes)
+            {
+                if (typeLabel == labelType.label)
+                {
+                    typeCode = labelType.code;
+                    break;
+                }
+            }
+            for (const LabelSubtype& subtype : m_transactionLabels->m_incomeTypes[typeCode].subtypes)
+            {
+                subtypeItems << subtype.label;
+            }
+        }
+        subtypeComboBox->addItems(subtypeItems);
+    });
+
+    // 5. Put the value
+
+    QLabel moneyLabel = QLabel("Indica el valor, en positiu (Ex: 34.21):", &dialog);
+    QLineEdit moneyLineEdit = QLineEdit(&dialog);
+
+    // 6. Select the date
+    QLabel dateLabel = QLabel("Selecciona el dia (avui per defecte):", &dialog);
+    QDateEdit* dateEdit = new QDateEdit(&dialog);
+    dateEdit->setCalendarPopup(true);
+    dateEdit->setDate(QDate::currentDate());
+
+    // 7. Prepare the layout
 
     QPushButton okButton = QPushButton("OK", &dialog);
     QPushButton cancelButton = QPushButton("Cancella", &dialog);
-
     connect(&okButton, &QPushButton::clicked, &dialog, &QDialog::accept);
     connect(&cancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
 
     QVBoxLayout layout = QVBoxLayout(&dialog);
-    layout.addWidget(&bankLabel);
-    layout.addWidget(&bankComboBox);
-    layout.addWidget(&initialMoneyLabel);
-    layout.addWidget(&initialMoneyLineEdit);
+    layout.addWidget(&accountLabel);
+    layout.addWidget(&accountComboBox);
+    layout.addWidget(&transactionTypeLabel);
+    layout.addWidget(&transactionTypeComboBox);
+    layout.addWidget(&typeLabel);
+    layout.addWidget(typeComboBox);
+    layout.addWidget(&subtypeLabel);
+    layout.addWidget(subtypeComboBox);
+    layout.addWidget(&moneyLabel);
+    layout.addWidget(&moneyLineEdit);
+    layout.addWidget(&dateLabel);
+    layout.addWidget(dateEdit);
     layout.addWidget(&okButton);
     layout.addWidget(&cancelButton);
 
@@ -416,23 +523,58 @@ void MainWindow::addTransactio()
         "}"
         "QPushButton:hover { background-color: #45a049; }"
         "QPushButton:pressed { background-color: #3e8e41; }"
+        "QComboBox {"
+        "    padding: 6px;"
+        "    border: 1px solid #ccc;"
+        "    border-radius: 5px;"
+        "}"
+        "QLineEdit {"
+        "    padding: 6px;"
+        "    border: 1px solid #ccc;"
+        "    border-radius: 5px;"
+        "}"
+        "QDateEdit {"
+        "    padding: 6px;"
+        "    border: 1px solid #ccc;"
+        "    border-radius: 5px;"
+        "}"
     );
-
+    
+    // 8. Check the data and process it if correct
     if (dialog.exec() == QDialog::Accepted)
     {
-        QString bank = bankLineEdit.text();
-        QString initialMoneyStr = initialMoneyLineEdit.text();
+        QString account = accountComboBox.currentText();
+        QString transaction = transactionTypeComboBox.currentText();
+        bool isPayment = transaction == "Despesa" ? true : false;
+        QString type = typeComboBox->currentText();
+        QString subtype = subtypeComboBox->currentText();
+        QString moneyStr = moneyLineEdit.text();
+        QDate date = dateEdit->date();
         
         bool conversionOk;
-        double initialMoney = initialMoneyStr.toFloat(&conversionOk);
+        double money = moneyStr.toFloat(&conversionOk);
+
+        if (account.isEmpty())
+        {
+            QMessageBox::critical(this, "Error", "Cal seleccionar compte");
+            return;
+        }
+
+        if (subtype.isEmpty())
+        {
+            QMessageBox::critical(this, "Error", "Cal fer seleccio de transaccio, tipus i subtipus");
+            return;
+        }
         
-        if (!conversionOk || initialMoney <= 0.0) {
+        if (!conversionOk || money <= 0.0)
+        {
             QMessageBox::critical(this, "Error", "Valor dels diners invalid. Escriu un numero valid i positiu");
             return;
         }
-        m_database->add_account(bank, initialMoney);
+        m_database->add_transaction(account, isPayment, type, subtype, money, date);
         update_summary();
-        QMessageBox::information(this, "Compte afegit amb exit!", QString("Banc: %1\nDiners inicials: %2").arg(bank).arg(initialMoney));
+        QMessageBox::information(this, "Transaccio afegida amb exit!",
+                                QString("Banc: %1\nTransaccio: %2\nTipus: %3\nSubtipus: %4\nValor: %5\nData: %6").arg(account).arg(transaction).arg(type).arg(subtype).arg(moneyStr).arg(date.toString()));
     }
 }
 

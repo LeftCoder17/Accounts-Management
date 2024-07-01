@@ -35,6 +35,19 @@ void Database::add_account(QString accountName, float initialMoney)
 }
 
 
+void Database::add_transaction(QString accountName, bool isPayment, QString type, QString subtype, float money, QDate date)
+{
+    for (Account *account : m_accounts)
+    {
+        if (account->get_name() == accountName)
+        {
+            account->add_transaction(isPayment, type, subtype, money, date);
+            break;
+        }
+    }
+}
+
+
 int Database::get_nAccounts()
 {
     return m_nAccounts;

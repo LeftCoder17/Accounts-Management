@@ -25,7 +25,7 @@ TIPUS DE PAGAMENTS
 1 JocDeTaula
 2 Vacances
 (3)SUBTIPUS PAGAMENT CULTURA
-2
+3
 0 Llibre
 1 Teatre
 2 Cinema

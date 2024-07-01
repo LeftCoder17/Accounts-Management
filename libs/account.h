@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <QString>
-
+#include <QDate>
 #include "transaction.h"
 
 class Account
@@ -15,6 +15,9 @@ public:
     Account(QString accountName, float initialMoney);
     // Destructor
     ~Account();
+
+    // Add a new transaction
+    void add_transaction(bool isPayment, QString type, QString subtype, float money, QDate date);
 
     // Getters
     QString get_name();

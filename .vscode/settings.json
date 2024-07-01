@@ -94,6 +94,8 @@
         "qfiledialog": "cpp",
         "qvboxlayout": "cpp",
         "qmessagebox": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "qinputdialog": "cpp",
+        "qtextstream": "cpp"
     }
 }

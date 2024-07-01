@@ -16,6 +16,7 @@ set(PROJECT_SOURCES
     main.cpp
     mainwindow.cpp
     mainwindow.h
+    resources.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -25,6 +26,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         libs/database.h libs/database.cpp
         libs/account.h libs/account.cpp
         libs/transaction.h libs/transaction.cpp
+        libs/labels.h libs/labels.cpp
     )
 else()
     add_executable(Account_Management
