@@ -2,3 +2,5 @@ CMakeLists.txt.user
 /build
 /databases/*.txt
 libs/labels.txt
+labels.txt
+libs/labels.txt
