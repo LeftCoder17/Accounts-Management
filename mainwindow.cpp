@@ -405,7 +405,6 @@ void MainWindow::addTransaction()
     QComboBox transactionTypeComboBox(&dialog);
     QStringList transactionTypeItems = {"Despesa", "Ingres"};
     transactionTypeComboBox.addItems(transactionTypeItems);
-    //transactionTypeComboBox.clear();
     
     // 3. Select Payment/Income type
 
@@ -431,6 +430,7 @@ void MainWindow::addTransaction()
             }
         }
         typeComboBox->addItems(typeItems);
+        typeComboBox->setCurrentIndex(0); // Default
     });
 
     // 4. Select subtype
@@ -475,7 +475,10 @@ void MainWindow::addTransaction()
             }
         }
         subtypeComboBox->addItems(subtypeItems);
+        subtypeComboBox->setCurrentIndex(0); // Default
     });
+
+    transactionTypeComboBox.setCurrentText("Ingres"); // Default type
 
     // 5. Put the value
 
