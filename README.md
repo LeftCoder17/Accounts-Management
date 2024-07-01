@@ -4,6 +4,8 @@ This is my first app I have tried to develop with Qt and is still unfinished. Ho
 
 The aim of the app is to manage your accounts and money, not only to have a control of the incomes and payments, but also to be able to analyse them. The analysis part is still missing though.
 
+<img src="app_capture.png" alt="Capture of the app while adding a transaction" width="500">
+
 ## Some comments
 1. Notice that the labels and text the the user read are in Catalan, as I want to use it for me. Nevertheless, the code is perfectly readable (at least I hope so) :)
 
