@@ -14,7 +14,7 @@ The aim of the app is to manage your accounts and money, not only to have a cont
 3. Graphic design is not my passion, so understand that it is not the most beatiful app you will ever see :)
 
 ## Bugs to fix
-1. For some combinations in the ComboBoxes of the "add_transaction" function, the app crashes. I haven't still tried to debug it very much, so maybe it is easy to solve with basic Qt knowledge.
+1. None that I know
 
 ## Further development
 Taking into account that it is not finished, finishing it is the main goal here. Therefore, these are the basic things that are still missing:

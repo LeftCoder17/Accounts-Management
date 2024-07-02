@@ -11,6 +11,7 @@
 #include <QStringList>
 #include <QDateEdit>
 #include <QDate>
+#include <QDebug>
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -411,11 +412,12 @@ void MainWindow::addTransaction()
     // 3. Select Payment/Income type
 
     QLabel typeLabel = QLabel("Tipus:", &dialog);
-    QComboBox *typeComboBox = new QComboBox(&dialog);
+    QComboBox typeComboBox(&dialog);
 
-    connect(&transactionTypeComboBox, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, [=](const QString& transactionType)
+    connect(&transactionTypeComboBox, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, [=, &typeComboBox](const QString& transactionType)
     {
-        typeComboBox->clear();
+        qDebug() << "Transaction type changed to" << transactionType;
+        typeComboBox.clear();
         QStringList typeItems;
         if (transactionType == "Despesa")
         {
@@ -431,20 +433,20 @@ void MainWindow::addTransaction()
                 typeItems << labelType.label;
             }
         }
-        typeComboBox->addItems(typeItems);
-        typeComboBox->setCurrentIndex(0); // Default
+        typeComboBox.addItems(typeItems);
+        typeComboBox.setCurrentIndex(0); // Default
     });
 
     // 4. Select subtype
 
     QLabel subtypeLabel = QLabel("Subtipus:", &dialog);
-    QComboBox *subtypeComboBox = new QComboBox(&dialog);
+    QComboBox subtypeComboBox(&dialog);
 
-    connect(typeComboBox, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, [=, &transactionTypeComboBox](const QString& typeLabel)
+    connect(&typeComboBox, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, [=, &transactionTypeComboBox, &subtypeComboBox](const QString& typeLabel)
     {
-        subtypeComboBox->clear();
+        subtypeComboBox.clear();
         QStringList subtypeItems;
-        int typeCode;
+        int typeCode = -1;
         QString transactionType = transactionTypeComboBox.currentText();
         if (transactionType == "Despesa")
         {
@@ -456,9 +458,12 @@ void MainWindow::addTransaction()
                     break;
                 }
             }
-            for (const LabelSubtype& subtype : m_transactionLabels->m_paymentTypes[typeCode].subtypes)
+            if (typeCode != -1)
             {
-                subtypeItems << subtype.label;
+                for (const LabelSubtype& subtype : m_transactionLabels->m_paymentTypes[typeCode].subtypes)
+                {
+                    subtypeItems << subtype.label;
+                }
             }
         }
         else
@@ -471,16 +476,21 @@ void MainWindow::addTransaction()
                     break;
                 }
             }
-            for (const LabelSubtype& subtype : m_transactionLabels->m_incomeTypes[typeCode].subtypes)
+            if (typeCode != -1)
             {
-                subtypeItems << subtype.label;
+                for (const LabelSubtype& subtype : m_transactionLabels->m_incomeTypes[typeCode].subtypes)
+                {
+                    subtypeItems << subtype.label;
+                }
             }
         }
-        subtypeComboBox->addItems(subtypeItems);
-        subtypeComboBox->setCurrentIndex(0); // Default
+        subtypeComboBox.addItems(subtypeItems);
+        subtypeComboBox.setCurrentIndex(0); // Default
     });
 
-    transactionTypeComboBox.setCurrentText("Ingres"); // Default type
+    QString defaultTransactionType = "Despesa";
+    transactionTypeComboBox.setCurrentText(defaultTransactionType);
+    emit transactionTypeComboBox.currentTextChanged(defaultTransactionType);
 
     // 5. Put the value
 
@@ -506,9 +516,9 @@ void MainWindow::addTransaction()
     layout.addWidget(&transactionTypeLabel);
     layout.addWidget(&transactionTypeComboBox);
     layout.addWidget(&typeLabel);
-    layout.addWidget(typeComboBox);
+    layout.addWidget(&typeComboBox);
     layout.addWidget(&subtypeLabel);
-    layout.addWidget(subtypeComboBox);
+    layout.addWidget(&subtypeComboBox);
     layout.addWidget(&moneyLabel);
     layout.addWidget(&moneyLineEdit);
     layout.addWidget(&dateLabel);
@@ -551,8 +561,8 @@ void MainWindow::addTransaction()
         QString account = accountComboBox.currentText();
         QString transaction = transactionTypeComboBox.currentText();
         bool isPayment = transaction == "Despesa" ? true : false;
-        QString type = typeComboBox->currentText();
-        QString subtype = subtypeComboBox->currentText();
+        QString type = typeComboBox.currentText();
+        QString subtype = subtypeComboBox.currentText();
         QString moneyStr = moneyLineEdit.text();
         QDate date = dateEdit->date();
         
