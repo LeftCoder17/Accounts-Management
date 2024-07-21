@@ -2,3 +2,4 @@ CMakeLists.txt.user
 /build
 /databases/*.txt
 labels.txt
+*.csv
