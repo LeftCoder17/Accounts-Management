@@ -4,7 +4,8 @@ TIPUS DE PAGAMENTS
 1 Menjar
 2 Entreteniment
 3 Cultura
-4 Altres
+4 Vacances
+5 Altres
 (0)SUBTIPUS PAGAMENT CASA
 6
 0 Lloguer
@@ -23,13 +24,21 @@ TIPUS DE PAGAMENTS
 3
 0 Videojoc
 1 JocDeTaula
-2 Vacances
+2 Musica
 (3)SUBTIPUS PAGAMENT CULTURA
 3
 0 Llibre
 1 Teatre
 2 Cinema
-(4)SUBTIPUS PAGAMENT ALTRES
+(4)SUBTIPUS PAGAMENT VACANCES
+6
+0 Allotjament
+1 Menjar
+2 Activitats
+3 Transport
+4 Obsequis
+5 Altres
+(5)SUBTIPUS PAGAMENT ALTRES
 3
 0 Deute
 1 Regal
