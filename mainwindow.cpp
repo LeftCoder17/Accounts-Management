@@ -112,8 +112,8 @@ void MainWindow::setupDatabaseMenu()
     m_showLastTransactionsButton = new QPushButton("Ultimes transaccions", this);
 
     m_databaseNameLabel->setStyleSheet("font-size: 20px; font-weight: bold; color: #333;");
-    m_accountCountLabel->setStyleSheet("font-size: 16px; color: #555;");
-    m_accountDetailsLabel->setStyleSheet("font-size: 16px; color: #555;");
+    m_accountCountLabel->setStyleSheet("font-size: 16px; font-weight: bold; color: #333;");
+    m_accountDetailsLabel->setStyleSheet("font-size: 16px; font-weight: bold; color: #333;");
     m_showLastTransactionsButton->setStyleSheet("padding: 10px; background-color: #0A4EAD; color: black; border: none; border-radius: 5px;");
 
     m_summaryWidget->setStyleSheet("background-color: #cce3e6; border: 1px solid #a7ffeb; border-radius: 10px; padding: 15px;");
@@ -306,7 +306,7 @@ void MainWindow::update_summary()
         Account* account = m_database->get_account(i);
         if (account)
         {
-            detailsText += QString("%1: %2\n").arg(account->get_name()).arg(account->get_money());
+            detailsText += QString(" - %1: %2\n").arg(account->get_name()).arg(account->get_money());
         }
     }
     
