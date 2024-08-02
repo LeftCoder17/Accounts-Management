@@ -16,8 +16,11 @@ public:
     // Destructor
     ~Account();
 
-    // Add a new transaction
+    // Add a new transaction using Raw data
     void add_transaction(bool isPayment, QString type, QString subtype, float money, QDate date);
+
+    // Add a new transaction using a transaction structure
+    void add_transaction(Transaction *newTransaction);
 
     // Getters
     

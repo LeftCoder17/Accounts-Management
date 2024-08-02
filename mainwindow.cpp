@@ -287,7 +287,6 @@ void MainWindow::openDatabase()
     {
         QMessageBox::critical(this, "Error", "No s'ha obert be la base de dades");
     }
-
 }
 
 
@@ -603,7 +602,30 @@ void MainWindow::modifyTransaction()
 
 void MainWindow::addTransactionsfromFile()
 {
-    QMessageBox::critical(this, "Perdona", "Encara no s'ha implementat aquesta opcio");
+    QString exeDirPath = QCoreApplication::applicationDirPath();
+    QDir dir(exeDirPath);
+    dir.cdUp();
+    dir.cdUp();
+    QString appRootPath = dir.absolutePath();
+
+    QString filePath = QFileDialog::getOpenFileName(this, "Obre un fitxer de transaccions", appRootPath, "Arxius de transaccions (*.csv)");
+    if (filePath.isEmpty()) return; // User canceled the name input or entered an empty name
+    std::ifstream file;
+    file.open(filePath.toStdString().c_str());
+
+    if (file.is_open())
+    {
+        file.close();
+        m_database->add_transactions_from_file(filePath, this);
+        update_summary();
+        m_unsavedChanges = true;
+        QMessageBox::information(this, "Transaccions afegides amb exit!",
+                                QString(filePath));
+    }
+    else
+    {
+        QMessageBox::critical(this, "Error", "No s'ha obert be el fitxer de transaccions");
+    }
 }
 
 

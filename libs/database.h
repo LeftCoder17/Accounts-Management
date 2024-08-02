@@ -24,8 +24,14 @@ public:
     // Add a new account
     void add_account(QString accountName, float initialMoney);
 
-    // Add a new transaction
+    // Add a new transaction using the Raw data
     void add_transaction(QString accountName, bool isPayment, QString type, QString subtype, float money, QDate date);
+
+    // Add a new transaction using a transaction structure
+    void add_transaction(QString accountName, Transaction *newTransaction);
+
+    // Add transactions from a file
+    void add_transactions_from_file(QString filePath, QWidget *parent);
 
     // Getters
 

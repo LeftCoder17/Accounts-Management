@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(Account_Management VERSION 1.0 LANGUAGES CXX)
+project(Account-Management VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -20,7 +20,7 @@ set(PROJECT_SOURCES
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(Account_Management
+    qt_add_executable(Account-Management
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         libs/database.h libs/database.cpp
@@ -29,23 +29,23 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         libs/labels.h libs/labels.cpp
     )
 else()
-    add_executable(Account_Management
+    add_executable(Account-Management
         ${PROJECT_SOURCES}
     )
 endif()
 
-target_link_libraries(Account_Management PRIVATE
+target_link_libraries(Account-Management PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
 )
 
-set_target_properties(Account_Management PROPERTIES
+set_target_properties(Account-Management PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-install(TARGETS Account_Management
+install(TARGETS Account-Management
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(Account_Management)
+    qt_finalize_executable(Account-Management)
 endif()

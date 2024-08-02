@@ -24,6 +24,13 @@ void Account::add_transaction(bool isPayment, QString type, QString subtype, flo
     m_money += isPayment ? (- money) : (money);
 }
 
+void Account::add_transaction(Transaction *newTransaction)
+{
+    m_nTransactions++;
+    m_transactions.push_back(newTransaction);
+    m_money += newTransaction->m_isPayment ? (- newTransaction->m_value) : (newTransaction->m_value);
+}
+
 
 QString Account::get_name()
 {

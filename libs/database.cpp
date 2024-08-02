@@ -6,7 +6,6 @@
 #include <QDate>
 #include <QString>
 
-
 Database::~Database()
 {
     for (Account *account : m_accounts)
@@ -147,6 +146,87 @@ void Database::add_transaction(QString accountName, bool isPayment, QString type
             break;
         }
     }
+}
+
+void Database::add_transaction(QString accountName, Transaction *newTransaction) {
+    for (Account *account : m_accounts)
+    {
+        if (account->get_name() == accountName)
+        {
+            account->add_transaction(newTransaction);
+            break;
+        }
+    }
+}
+
+void Database::add_transactions_from_file(QString filePath, QWidget *parent)
+{
+    std::ifstream file;
+    file.open(filePath.toStdString().c_str());
+
+    if (!file.is_open())
+    {
+        QMessageBox::critical(parent, "Error", "No s'ha pogut obrir el fitxer");
+        return;
+    }
+
+    std::string line;
+    std::vector<QString> accountNames {};
+    std::vector<Transaction*> newTransactions {};
+    int nTransactions {0};
+
+    // 1. Ignore header (3 lines)
+    for (int i = 0; i < 3; i++) {
+        std::getline(file,line);
+    }
+
+    // 2. Read all the lines and store them as transactions
+    while(std::getline(file, line))
+    {
+        if (line.length() < 12)  // It doesn't contain full information (probably end of the data)
+        {
+            break;
+        }
+        std::string accountName, transactionType, type, subtype, valueStr, dateStr;
+        std::istringstream transactionLine(line);
+        std::getline(transactionLine, accountName, ',');
+        std::getline(transactionLine, transactionType, ',');
+        std::getline(transactionLine, type, ',');
+        std::getline(transactionLine, subtype, ',');
+        std::getline(transactionLine, valueStr, ',');
+        std::getline(transactionLine, dateStr);
+
+        bool isPayment = (transactionType == "Despesa");
+        float value = std::abs(std::stof(valueStr));
+
+        // This may depend on the text format that the csv has of the Date
+        // Currently, dd-MM-yy is used and the year must increase from 19XX to 20XX
+        QDate date = QDate::fromString(QString::fromStdString(dateStr), "MM-dd-yy"); // Change it
+        if (!date.isValid())
+        {
+            QMessageBox::critical(parent, "Error", "El format de les dates no és correcte.\nHa de ser MM-dd-yy");
+            for (Transaction *newTransaction : newTransactions)
+            {
+                delete newTransaction;
+            }
+            return;
+        }
+        date = date.addYears(100);
+
+        Transaction *newTransaction = new Transaction(isPayment, QString::fromStdString(type), QString::fromStdString(subtype), value, date);
+        newTransactions.push_back(newTransaction);
+        accountNames.push_back(QString::fromStdString(accountName));
+        nTransactions++;
+    }
+
+    // 3. In case all transactions are valid, add them
+    for (int i = 0; i < nTransactions; i++)
+    {
+        add_transaction(accountNames[i], newTransactions[i]);
+    }
+
+    // 4. Close file
+    file.close();
 }
 
 
