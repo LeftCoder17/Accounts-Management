@@ -381,7 +381,141 @@ void MainWindow::addAccount()
 
 void MainWindow::modifyAccount()
 {
-    QMessageBox::critical(this, "Perdona", "Encara no s'ha implementat aquesta opcio");
+    QDialog dialog(this);
+    dialog.setWindowTitle("Modifica un compte");
+
+    // 1. Select the account
+    QLabel accountLabel = QLabel("Selecciona Compte:", &dialog);
+    QComboBox accountComboBox(&dialog);
+    std::vector<QString> accountsNames = m_database->get_accounts_names_vector();
+    QStringList accountItems;
+    for (const QString& option : accountsNames) {
+        accountItems << option;
+    }
+    accountComboBox.addItems(QStringList::fromVector(accountItems));
+
+    // 2. Text layout
+    QLabel nameLabel = QLabel("Indica el nom:", &dialog);
+    QLineEdit nameLineEdit = QLineEdit(&dialog);
+    nameLineEdit.setText(accountComboBox.currentText()); 
+    QLabel moneyLabel = QLabel("Indica els diners (Ex: 34.67):", &dialog);
+    QLineEdit moneyLineEdit = QLineEdit(&dialog);
+    for (int i = 0; i < m_database->get_nAccounts(); i++)
+    {
+        if (m_database->get_account(i)->get_name() == accountComboBox.currentText())
+        {
+            moneyLineEdit.setText(QString::number(m_database->get_account(i)->get_money()));
+            break;
+        }
+    }
+
+    connect(&accountComboBox, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, [&nameLineEdit, &moneyLineEdit, &accountComboBox, this](const QString &text)
+    {
+        // Change name Line Edit
+        nameLineEdit.setText(accountComboBox.currentText());
+
+        // Change money Line Edit
+        for (int i = 0; i < m_database->get_nAccounts(); i++)
+        {
+            if (m_database->get_account(i)->get_name() == accountComboBox.currentText())
+            {
+                moneyLineEdit.setText(QString::number(m_database->get_account(i)->get_money()));
+                break;
+            }
+        }
+    });
+
+    // 3. Buttons layout
+    QPushButton okButton = QPushButton("Ok", &dialog);
+    QPushButton cancelButton = QPushButton("Cancella", &dialog);
+    connect(&okButton, &QPushButton::clicked, &dialog, &QDialog::accept);
+    connect(&cancelButton, &QPushButton::clicked, &dialog, &QDialog::reject);
+
+    // 4. Layout
+    QVBoxLayout layout = QVBoxLayout(&dialog);
+    layout.addWidget(&accountLabel);
+    layout.addWidget(&accountComboBox);
+    layout.addWidget(&nameLabel);
+    layout.addWidget(&nameLineEdit);
+    layout.addWidget(&moneyLabel);
+    layout.addWidget(&moneyLineEdit);
+    layout.addWidget(&okButton);
+    layout.addWidget(&cancelButton);
+
+    dialog.setStyleSheet(
+        "QLabel { font-weight: bold; }"
+        "QPushButton {"
+        "    background-color: #4CAF50;"
+        "    color: white;"
+        "    font-size: 14px;"
+        "    padding: 8px 16px;"
+        "    border: none;"
+        "    border-radius: 5px;"
+        "}"
+        "QPushButton:hover { background-color: #45a049; }"
+        "QPushButton:pressed { background-color: #3e8e41; }"
+        "QComboBox {"
+        "    padding: 6px;"
+        "    border: 1px solid #ccc;"
+        "    border-radius: 5px;"
+        "}"
+        "QLineEdit {"
+        "    padding: 6px;"
+        "    border: 1px solid #ccc;"
+        "    border-radius: 5px;"
+        "}"
+        "QDateEdit {"
+        "    padding: 6px;"
+        "    border: 1px solid #ccc;"
+        "    border-radius: 5px;"
+        "}"
+    );
+    
+    // 5. Check the data and process it if correct
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        QString account = accountComboBox.currentText();
+        QString name = nameLineEdit.text();
+        QString moneyStr = moneyLineEdit.text();
+        bool conversionOk;
+        float money = moneyStr.toFloat(&conversionOk);
+        QString oldMoneyStr {};
+
+        if (account.isEmpty())
+        {
+            QMessageBox::critical(this, "Error", "Cal seleccionar compte");
+            return;
+        }
+
+        if (name == "")
+        {
+            QMessageBox::critical(this, "Error", "Cal seleccionar un nom");
+            return;
+        }
+        
+        if (!conversionOk)
+        {
+            QMessageBox::critical(this, "Error", "Valor dels diners invalid. Escriu un numero valid, positiu o negatiu (Exemple: 34.67)");
+            return;
+        }
+
+        Account *selectedAccount {nullptr};
+        for (int i = 0; i < m_database->get_nAccounts(); i++)
+        {
+            if (m_database->get_account(i)->get_name() == accountComboBox.currentText())
+            {
+                selectedAccount = m_database->get_account(i);
+                oldMoneyStr = QString::number(selectedAccount->get_money());
+                selectedAccount->set_name(name);
+                selectedAccount->set_money(money);
+                break;
+            }
+        }
+        update_summary();
+        m_unsavedChanges = true;
+        QMessageBox::information(this, "Compte modificat amb exit!",
+                                QString("Banc: %1 ---> %2\nDiners: %3 ---> %4").arg(account).arg(name).arg(oldMoneyStr).arg(moneyStr));
+    }
 }
 
 
@@ -415,7 +549,6 @@ void MainWindow::addTransaction()
 
     connect(&transactionTypeComboBox, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, [=, &typeComboBox](const QString& transactionType)
     {
-        qDebug() << "Transaction type changed to" << transactionType;
         typeComboBox.clear();
         QStringList typeItems;
         if (transactionType == "Despesa")
@@ -566,7 +699,7 @@ void MainWindow::addTransaction()
         QDate date = dateEdit->date();
         
         bool conversionOk;
-        double money = moneyStr.toFloat(&conversionOk);
+        float money = moneyStr.toFloat(&conversionOk);
 
         if (account.isEmpty())
         {

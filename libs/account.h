@@ -30,6 +30,7 @@ public:
     Transaction* get_transaction(int index);
 
     // Setters
+    void set_name(QString name);
     void set_money(float money);
 
 
